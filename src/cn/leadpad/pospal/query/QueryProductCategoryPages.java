@@ -14,11 +14,10 @@ public class QueryProductCategoryPages {
 
     static List<CategoryProductData> categoryProductDataList = new ArrayList<>();
 
-    public static List<CategoryProductData> run() throws IOException {
+    public static List<CategoryProductData> run(int wantQueryRecordSize, int storeRecordSize) throws IOException {
         // pageSize -> this query is expected to take the number of records from the inventor.
         // if the length of the result / real query size < want query size then no query is required for next page
-        int wantQueryRecordSize = 25;
-        int storeRecordSize = 25;
+
 
         String urlString = Key.POS_URL_PREFIX + Key.POS_URL_MIDDLE_PRODUCT + Key.QUERY_PRODUCT_CATEGORY_PAGES;
 

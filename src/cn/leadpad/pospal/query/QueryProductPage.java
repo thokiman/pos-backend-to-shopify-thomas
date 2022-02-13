@@ -16,11 +16,9 @@ public class QueryProductPage {
 
     static List<ProductData> productDataList = new ArrayList<>();
 
-    public static List<ProductData> run (long categoryUid) throws IOException {
-        int wantQueryRecordSize = 25;
-        int storeRecordSize = 15;
+    public static List<ProductData> run(long categoryUid, int wantQueryRecordSize, int storeRecordSize) throws IOException {
 
-        String urlString = Key.POS_URL_PREFIX+ Key.POS_URL_MIDDLE_PRODUCT + Key.QUERY_PRODUCT_PAGES;
+        String urlString = Key.POS_URL_PREFIX + Key.POS_URL_MIDDLE_PRODUCT + Key.QUERY_PRODUCT_PAGES;
         UserCertificate certificate = new UserCertificate(Key.POS_APP_ID, Key.POS_APP_KEY);
         CategoryDetail categoryDetail = new CategoryDetail(categoryUid);
 
@@ -28,7 +26,7 @@ public class QueryProductPage {
         RequestProductData requestProductData = new RequestProductData();
         do {
             ResponseData sendRequestData = PospalApiService
-                    .sendRequestData(urlString, requestProductData, categoryDetail ,certificate);
+                    .sendRequestData(urlString, requestProductData, categoryDetail, certificate);
             String responseContent = sendRequestData.getResponseContent();
             System.out.println("1. responseContent " + QueryProductPage.class.getSimpleName());
             System.out.println(responseContent);
@@ -40,17 +38,17 @@ public class QueryProductPage {
             int realQueryRecordSize = productResponseData.getData().getResult().size();
             queryNextPage = (wantQueryRecordSize > realQueryRecordSize);
             System.out.println("2.");
-            System.out.println("wantQueryRecordSize="+wantQueryRecordSize+",realQueryRecordSize="+realQueryRecordSize);
+            System.out.println("wantQueryRecordSize=" + wantQueryRecordSize + ",realQueryRecordSize=" + realQueryRecordSize);
 
-            List<ProductInfo> products =  productResponseData.getData().getResult();
+            List<ProductInfo> products = productResponseData.getData().getResult();
 
             for (ProductInfo product : products) {
-                if (productDataList.size() <= storeRecordSize-1) {
+                if (productDataList.size() <= storeRecordSize - 1) {
                     ProductData productData = new ProductData(
-                            product.getUid(),product.getCategoryUid(),product.getName(),product.getBarcode(),product.getBuyPrice(),
-                            product.getSellPrice(),product.getStock(), product.getCustomerPrice()
-                            ,product.getDescription(),product.getAttribute1(),product.getAttribute2(),
-                            product.getAttribute3(),product.getAttribute4());
+                            product.getUid(), product.getCategoryUid(), product.getName(), product.getBarcode(), product.getBuyPrice(),
+                            product.getSellPrice(), product.getStock(), product.getCustomerPrice()
+                            , product.getDescription(), product.getAttribute1(), product.getAttribute2(),
+                            product.getAttribute3(), product.getAttribute4());
 
                     productDataList.add(productData);
                 }
@@ -59,20 +57,19 @@ public class QueryProductPage {
             // Set the return parameters required to query the next page, postBackParameter
             requestProductData.setPostBackParameter(productResponseData.getData().getPostBackParameter());
 
-        } while(queryNextPage);
+        } while (queryNextPage);
 
-        System.out.println(QueryProductPage.class.getSimpleName()+ ", array list size = " + productDataList.size());
+        System.out.println(QueryProductPage.class.getSimpleName() + ", array list size = " + productDataList.size());
 
         return productDataList;
 
     }
 
 
-
-    static class RequestProductData  extends PosaplOpenApiRequestData {
+    static class RequestProductData extends PosaplOpenApiRequestData {
         PostBackParameter postBackParameter;
 
-        void setPostBackParameter (PostBackParameter postBackParameter) {
+        void setPostBackParameter(PostBackParameter postBackParameter) {
             this.postBackParameter = postBackParameter;
         }
     }
@@ -81,7 +78,7 @@ public class QueryProductPage {
     static class ProductResponseData {
         ProductResponseDataDetail data;
 
-      ProductResponseDataDetail getData() {
+        ProductResponseDataDetail getData() {
             return data;
         }
     }
@@ -103,6 +100,7 @@ public class QueryProductPage {
             return pageSize;
         }
     }
+
     static class ProductInfo {
         private long uid;
         private long categoryUid;
